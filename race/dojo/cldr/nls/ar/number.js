@@ -1,0 +1,2 @@
+//>>built
+define("dojo/cldr/nls/ar/number",{group:"\u066c",percentSign:"\u066a",exponential:"\u0627\u0633",list:"\u061b",infinity:"\u221e",minusSign:"-",decimal:"\u066b",nan:"\u0644\u064a\u0633 \u0631\u0642\u0645",perMille:"\u0609",decimalFormat:"#,##0.###;#,##0.###-",currencyFormat:"\u00a4\u00a0#,##0.00;\u00a4\u00a0#,##0.00-",plusSign:"+"});

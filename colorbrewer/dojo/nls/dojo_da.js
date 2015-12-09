@@ -1,0 +1,2 @@
+//>>built
+define("dojo/nls/dojo_da",{"dijit/form/nls/validate":{rangeMessage:"V\u00e6rdien er uden for intervallet.",invalidMessage:"Den angivne v\u00e6rdi er ikke gyldig.",missingMessage:"V\u00e6rdien er p\u00e5kr\u00e6vet."}});

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+	
+<title>OpenStreetMap Explorer</title>
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+<link rel="stylesheet" href="../../cbtree/themes/claro/claro.css" />
+<link rel="stylesheet" href="../../djeo-ui/tree/resources/tree.css" />
+
+<style>
+html, body, #container{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+#map{
+	background-color: #f1eee8;
+}
+</style>
+
+<script>
+	dojoConfig = {
+		isDebug: false,
+		async: true,
+		djeoEngine: "djeo"
+	};
+</script>
+<script src="../util.js"></script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+
+require([
+	"djeo/parser/osm",
+	"./style.js",
+	"dojo/_base/kernel", // locale
+	"dojo/dom-construct", // place
+	"dojo/aspect", // after
+	"dijit/layout/BorderContainer",
+	"dijit/layout/ContentPane",
+	
+	"djeo/Map",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"djeo/control/Navigation",
+
+	"djeo-ui/Tree",
+	
+	"dojo/domReady!"
+],
+function(osm, style, kernel, domConstruct, aspect, BorderContainer, ContentPane, Map, Highlight, Tooltip, Navigation, Tree) {
+	var nameAttr = "name:" + kernel.locale.substr(0, 2);
+
+	var bc = new BorderContainer({
+		design: "sidebar"
+	}, "container");
+	
+	var treeCp = new ContentPane({
+		region: "leading",
+		style: "width: 250px;",
+		splitter: true
+	});
+	bc.addChild(treeCp);
+	
+	var mapCp = new ContentPane({
+		region: "center",
+		style: "padding: 0",
+		content: "<div id='map' style='width:100%; height:100%;'></div>"
+	});
+	bc.addChild(mapCp);
+	
+	bc.startup();
+	
+	var e = dojoConfig.djeoEngine,
+		layers = (e=="djeo" || e=="leaflet" || e=="esri") ? "ROADMAP" : "SATELLITE"
+	;
+
+	var map = new Map("map", {
+		features: osm.parseFromUrl(hrefParams.data ? hrefParams.data : "data/berlin.osm", {
+			style: style,
+			assignBuildingHeight: true
+		}),
+		style: style,
+		iconBasePath: "icons/",
+		layers: layers
+	});
+	map.ready(function() {
+		aspect.after(mapCp, "resize", function(){
+			map.resize();
+		});
+		new Highlight(map);
+		new Tooltip(map);
+		new Navigation(map);
+
+		var tree = new Tree({
+			showRoot: false,
+			rootLabel: "OpenStreetMap Explorer",
+			map: map,
+			modelOptions: {
+				getLabel: function(feature) {
+					var localizedName = feature.get(nameAttr),
+						name = feature.get("name")
+					;
+					return (feature === this.map.document) ? this.rootLabel :
+						localizedName ? localizedName : (name ? name : "");
+				}
+			},
+			style: "height: 100%"
+		});
+		domConstruct.place(tree.domNode, treeCp.domNode);
+	});
+});
+</script>
+
+</head>
+
+<body class="claro">
+	<div id="container"></div>
+</body>
+</html>

@@ -1,0 +1,2 @@
+//>>built
+define("dojo/nls/dojo_tr",{"dijit/form/nls/validate":{rangeMessage:"Bu de\u011fer aral\u0131k d\u0131\u015f\u0131nda.",invalidMessage:"Girilen de\u011fer ge\u00e7ersiz.",missingMessage:"Bu de\u011fer gerekli."}});

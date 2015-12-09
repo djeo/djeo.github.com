@@ -1,0 +1,2 @@
+//>>built
+define("dojo/nls/dojo_cs",{"dijit/form/nls/validate":{rangeMessage:"Tato hodnota je mimo rozsah.",invalidMessage:"Zadan\u00e1 hodnota nen\u00ed platn\u00e1.",missingMessage:"Tato hodnota je vy\u017eadov\u00e1na."}});

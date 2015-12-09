@@ -1,0 +1,2 @@
+//>>built
+define("dojo/cldr/nls/cs/currency",{HKD_displayName:"Dolar hongkongsk\u00fd",CHF_displayName:"Frank \u0161v\u00fdcarsk\u00fd",CAD_displayName:"Dolar kanadsk\u00fd",CNY_displayName:"Juan renminbi",AUD_displayName:"Dolar australsk\u00fd",JPY_displayName:"Jen",USD_displayName:"Dolar americk\u00fd",GBP_displayName:"Libra \u0161terlink\u016f",EUR_displayName:"Euro"});

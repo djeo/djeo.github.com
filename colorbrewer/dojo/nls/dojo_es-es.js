@@ -1,0 +1,2 @@
+//>>built
+define("dojo/nls/dojo_es-es",{"dijit/form/nls/validate":{rangeMessage:"Este valor est\u00e1 fuera del intervalo.",invalidMessage:"El valor especificado no es v\u00e1lido.",missingMessage:"Este valor es necesario."}});

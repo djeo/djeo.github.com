@@ -1,0 +1,2 @@
+//>>built
+define("dojo/nls/dojo_pl",{"dijit/form/nls/validate":{rangeMessage:"Ta warto\u015b\u0107 jest spoza zakresu.",invalidMessage:"Wprowadzona warto\u015b\u0107 jest niepoprawna.",missingMessage:"Ta warto\u015b\u0107 jest wymagana."}});

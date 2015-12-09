@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link rel="stylesheet" href="../../dijit/themes/claro/claro.css"/>
+
+<style>
+@import "../../dgrid/css/skins/claro.css";
+
+html, body, #container{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+
+#grid {
+	height: 100%;
+}
+#grid .column-id {
+	width: 12%;
+}
+#grid .column-name {
+	width: 45%;
+}
+#grid .column-state {
+	width: 13%;
+}
+</style>
+
+<script>
+	dojoConfig = {
+		isDebug: false,
+		async: true,
+		djeoEngine: "djeo"
+	};
+</script>
+<script src="../../dojo/dojo.js"></script>
+<script src="../util.js"></script>
+
+<script>
+DebugUtil.timer.start("loading");
+
+var requireModules = [
+	"dojo/parser",
+	"dojo/aspect", // after
+	"dijit/registry", // byId
+	"dijit/layout/BorderContainer",
+	"dijit/layout/ContentPane",
+	"dgrid/Grid",
+	
+	"djeo/Map",
+	"djeo/control/Navigation",
+	"djeo/control/Highlight",
+	"djeo/control/Tooltip",
+	"djeo/widget/Legend",
+
+	"djeo-demos/airports/data/airports",
+	"djeo/util/numeric",
+	"djeo-jenks/main",
+	
+	"dojo/query", // needed for grid.on(".dgrid-row:...", callback)
+	"dojo/domReady!"
+];
+
+var ready = function(
+	parser, aspect, dijitRegistry,
+	BorderContainer, ContentPane, Grid,
+	Map, Navigation, Highlight, Tooltip,
+	Legend, airports, numeric, jenks
+	) {
+	DebugUtil.timer.end("loading");
+
+	parser.parse();
+
+	var normalStyle = {
+		styleClass: "iconSizeByValue",
+		img: {src: "icons/plane_red.png", size: [50, 50]},
+		strokeWidth: 1,
+		name: "Number of enplanements",
+		composer: numeric.composeStyle,
+		composerOptions: {
+			numClasses: 8,
+			medianSize: 20,
+			sizeStep: 3,
+			attr: "enplanements",
+			breaks: jenks.getBreaks,
+			//breaks: [0, 4000000, 10000000, 40000000],
+			composeStyle: numeric.composeSizeStyle
+		},
+		legend:  Legend._getBreaksIconLegend
+	};
+	var higlightStyle = {
+		theme: "highlight",
+		img: "icons/plane_blue.png"
+	};
+	var features = [
+		{
+			id: "airports",
+			styleClass: "iconSizeByValue",
+			features: airports
+		}
+	];
+	var geometries;
+	
+	var e = dojoConfig.djeoEngine,
+		layers = (e=="djeo" || e=="leaflet" || e=="esri") ? "OSM" : "HYBRID"
+	;
+	
+	DebugUtil.timer.start("render");
+    var map = new Map("map", {
+		features: features,
+		geometries: geometries,
+		style: [normalStyle, higlightStyle],
+		layers: layers
+	});
+
+	map.ready(function(){
+		DebugUtil.timer.end("render");
+
+		aspect.after(dijitRegistry.byId("gridContainer"), "resize", function() {
+			map.resize();
+		});
+
+		new Navigation(map);
+		new Highlight(map, {features: "airports"});
+
+		new Tooltip(map, {
+			features: "airports",
+			content: function(feature) {
+				return "<span style='font-weight:bold'>"+feature.name+"</span><br>"+
+				"Number of enplanement: "+feature.get("enplanements");
+			}
+		});
+		
+		new Legend({map: map}, "mapLegend");
+		
+		// setup the grid
+		var columns = {
+			id: {label: "Code"},
+			name: {label: "Name", sortable: false},
+			state: {label: "State"},
+			enplanements: {label: "Enplanements"}
+		};
+		var grid = new Grid({
+			columns: columns
+		}, "grid");
+		grid.on(".dgrid-row:mouseover", function(evt){
+			var feature = map.$(grid.row(evt).data.id);
+			feature.set("state", "highlight");
+		});
+		grid.on(".dgrid-row:mouseout", function(evt){
+			var feature = map.$(grid.row(evt).data.id);
+			feature.set("state");
+		});
+		grid.on(".dgrid-row:dblclick", function(evt){
+			map.zoomTo(grid.row(evt).data.id);
+		});
+		grid.renderArray(airports);
+		grid.sort("enplanements", true);
+	});
+}
+
+require(requireModules, ready);
+</script>
+
+</head>
+
+<body class="claro">
+
+<div id="container" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'sidebar'">
+	<div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="id:'gridContainer', design:'headline', region:'leading', splitter:true, gutters: false, style:'width:500px; padding:0;'">
+		<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top', splitter:false, style:'padding:0'">
+			<h3>Number of enplanements in the largest US airports</h3>
+			<ul>
+				<li>Move the cursor over the grid to highlight the respective airport on the map</li>
+				<li>A feature on the map is highlighted too if you point mouse on it</li>
+				<li>Double click on a grid row to zoom the map to the related airport</li>
+			</ul>
+		</div>
+		<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center', style:'padding:0; overflow:hidden;'">
+			<div id="grid"></div>
+		</div>
+	</div>
+	<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center', style:'padding:0'">
+		<div id="map" style="width:100%;height:500px;"></div>
+		<div id="mapLegend"></div>
+	</div>
+</div>
+
+</body>
+</html>

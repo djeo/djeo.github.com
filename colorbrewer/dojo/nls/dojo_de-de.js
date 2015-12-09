@@ -1,0 +1,2 @@
+//>>built
+define("dojo/nls/dojo_de-de",{"dijit/form/nls/validate":{rangeMessage:"Dieser Wert liegt au\u00dferhalb des g\u00fcltigen Bereichs. ",invalidMessage:"Der eingegebene Wert ist ung\u00fcltig. ",missingMessage:"Dieser Wert ist erforderlich."}});

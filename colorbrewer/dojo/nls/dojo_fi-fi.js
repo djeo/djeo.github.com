@@ -1,0 +1,2 @@
+//>>built
+define("dojo/nls/dojo_fi-fi",{"dijit/form/nls/validate":{rangeMessage:"T\u00e4m\u00e4 arvo on sallitun alueen ulkopuolella.",invalidMessage:"Annettu arvo ei kelpaa.",missingMessage:"T\u00e4m\u00e4 arvo on pakollinen."}});

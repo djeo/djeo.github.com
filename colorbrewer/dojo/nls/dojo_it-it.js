@@ -1,0 +1,2 @@
+//>>built
+define("dojo/nls/dojo_it-it",{"dijit/form/nls/validate":{rangeMessage:"Questo valore non \u00e8 compreso nell'intervallo.",invalidMessage:"Il valore immesso non \u00e8 valido.",missingMessage:"Questo valore \u00e8 obbligatorio."}});

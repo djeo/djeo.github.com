@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<script>
+	dojoConfig = {
+		isDebug: false,
+		async: true,
+		djeoEngine: "djeo"
+	};
+</script>
+<script src="../util.js"></script>
+<script src="../../dojo/dojo.js"></script>
+
+<script>
+
+var numCars = 20,
+	carDistance = 50
+;
+
+require([
+	"djeo/Map",
+	"djeo/control/Navigation",
+	"djeo/control/Highlight",
+	"djeo-demos/race/RaceServer",
+	"djeo-demos/race/RaceClient",
+	"resources/track.js",
+	"djeo/Model",
+	"dojo/domReady!"
+], function(Map, Navigation, Highlight, RaceServer, RaceClient, trackCoords) {
+	
+	var server = new RaceServer({
+		trackCoords: trackCoords,
+		numCars: numCars,
+		carDistance: carDistance,
+		speed: 14 // ~50 km/h
+	});
+	
+	var carPositions = server.getInitialCarPositions();
+	
+	var features = [];
+	for(var i=0; i<numCars; i++) {
+		features.push({
+			id: i+1,
+			type: "Model",
+			coords: carPositions[i][0],
+			href: "resources/mercedes1904.kmz",
+			style: {
+				img: "resources/mercedes1904.png",
+				size: [32,32]
+			},
+			orientation: carPositions[i][1]
+		});
+	}
+	
+	var e = dojoConfig.djeoEngine,
+		layers = (e=="gmaps" || e=="ge") ? "SATELLITE" : "osm",
+		extent = (e!="ge") ? [8.564, 49.3256, 8.584, 49.333] : null // a deeper zoom for Google Earth Javascript API
+	;
+
+	var map = new Map("map", {
+		features: features,
+		layers: layers,
+		renderModels: true,
+		extent: extent,
+		// Leaflet, Google Maps API, Yandex Maps API don't support icon orientation natively.
+		// However, it's possible to simulate it via pre-generated sprites.
+		// Use python scripts make_sprites.py or rotate_icon.py from https://github.com/vvoovv/djeo-utils
+		// to generate a single image with 360 icon orientations or 360 images each for a specific icon orientation, respectively.
+		// Install PIL python library from http://www.pythonware.com/products/pil/ to run the scripts
+		simulateOrientation: true
+	});
+	map.ready(function(){
+		new Navigation(map);
+		if (e!="ymaps") new Highlight(map); // TODO: maybe a bug, check this later
+		new RaceClient({
+			map: map,
+			server: server,
+			running: true
+		})
+	});
+});
+
+</script>
+
+</head>
+
+<body class="claro">
+
+<h3>Mercedes 1904 race</h3>
+<a href="http://sketchup.google.com/3dwarehouse/details?mid=d552a3914aa20ccf8baa84b619e095f8"><img src="resources/mercedes1904_big.jpg"></a>
+<br>
+<div id="map" style="width:800px;height:600px;"></div>
+<br>
+3D model source for Google Earth: <a href="http://sketchup.google.com/3dwarehouse/details?mid=d552a3914aa20ccf8baa84b619e095f8">3D Warehouse</a>
+</body>
+</html>

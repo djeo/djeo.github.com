@@ -1,0 +1,2 @@
+//>>built
+define("dojo/nls/dojo_sv",{"dijit/form/nls/validate":{rangeMessage:"V\u00e4rdet \u00e4r utanf\u00f6r intervallet.",invalidMessage:"Det angivna v\u00e4rdet \u00e4r ogiltigt.",missingMessage:"V\u00e4rdet \u00e4r obligatoriskt."}});
